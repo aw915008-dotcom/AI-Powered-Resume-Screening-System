@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>نظام فحص السير الذاتية بالذكاء الاصطناعي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F6F3EC;
+    --paper-raised: #FFFFFF;
+    --ink: #1E2333;
+    --ink-soft: #565C6E;
+    --ink-faint: #9498A6;
+    --mark: #D8481F;
+    --mark-soft: #FBE6DD;
+    --mark-deep: #7A2610;
+    --good: #2F7A4F;
+    --good-soft: #E2F1E7;
+    --line: #E4E0D4;
+    --line-strong: #CFC9B8;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Tajawal', sans-serif;
+    line-height: 1.7;
+  }
+
+  h1, h2, h3, .display {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 64px 0 40px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--mark);
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+    line-height: 1.25;
+    max-width: 720px;
+    color: var(--ink);
+  }
+
+  .hero h1 span {
+    color: var(--mark);
+    position: relative;
+    display: inline-block;
+  }
+
+  .hero p.sub {
+    margin-top: 18px;
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 560px;
+  }
+
+  /* ---------- Form layout ---------- */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  @media (max-width: 760px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 30px; }
+  }
+
+  .panel {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+
+  .panel h2 {
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+
+  .panel .hint {
+    font-size: 13px;
+    color: var(--ink-faint);
+    margin: 0 0 18px;
+  }
+
+  label.field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    color: var(--ink-soft);
+    margin: 16px 0 6px;
+  }
+  label.field-label:first-of-type { margin-top: 0; }
+
+  input[type="text"], textarea {
+    width: 100%;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    padding: 11px 13px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14.5px;
+    background: var(--paper);
+    color: var(--ink);
+    resize: vertical;
+  }
+  input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--mark);
+    box-shadow: 0 0 0 3px var(--mark-soft);
+  }
+
+  textarea { min-height: 160px; }
+
+  .dropzone {
+    border: 1.5px dashed var(--line-strong);
+    border-radius: 10px;
+    padding: 22px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--paper);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .dropzone:hover, .dropzone.drag { border-color: var(--mark); background: var(--mark-soft); }
+  .dropzone p { margin: 6px 0 0; font-size: 13px; color: var(--ink-faint); }
+  .dropzone .icon { font-size: 22px; color: var(--mark); }
+  .dropzone input { display: none; }
+
+  .file-list { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .file-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
+    padding: 8px 12px; font-size: 13.5px;
+  }
+  .file-row button {
+    border: none; background: none; color: var(--ink-faint); cursor: pointer; font-size: 15px;
+    font-family: inherit;
+  }
+  .file-row button:hover { color: var(--mark); }
+
+  .run-btn {
+    margin-top: 22px;
+    width: 100%;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    font-size: 15.5px;
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  .run-btn:hover { background: var(--mark); }
+  .run-btn:disabled { background: var(--line-strong); color: var(--ink-faint); cursor: not-allowed; }
+
+  .error-box {
+    margin-top: 14px;
+    background: var(--mark-soft);
+    color: var(--mark-deep);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    display: none;
+  }
+
+  /* ---------- Results ---------- */
+  #results { margin-top: 48px; display: none; }
+
+  .winner-strip {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: var(--radius);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .winner-strip .tag {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    background: var(--mark);
+    color: white;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .winner-strip .text { font-size: 15px; }
+  .winner-strip .text b { font-family: 'Cairo', sans-serif; }
+
+  .backend-note {
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    margin-bottom: 20px;
+  }
+
+  .card {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 640px) {
+    .card { grid-template-columns: 1fr; }
+  }
+
+  .gauge-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .gauge-wrap .rank { font-family: 'Cairo', sans-serif; font-size: 12px; color: var(--ink-faint); font-weight: 700; }
+
+  .card-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .card-title h3 { font-size: 17px; }
+  .category-badge {
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+    font-family: 'Cairo', sans-serif;
+  }
+
+  .explanation { font-size: 14px; color: var(--ink-soft); margin-bottom: 14px; }
+
+  .metrics-row { display: flex; gap: 22px; margin-bottom: 16px; flex-wrap: wrap; }
+  .metric { }
+  .metric .num { font-family: 'Cairo', sans-serif; font-size: 20px; font-weight: 800; }
+  .metric .lbl { font-size: 12px; color: var(--ink-faint); }
+
+  .chip-groups { display: flex; gap: 24px; flex-wrap: wrap; }
+  .chip-group { flex: 1; min-width: 200px; }
+  .chip-group .glabel {
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px; font-weight: 700; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .chip-group.match .glabel { color: var(--good); }
+  .chip-group.miss .glabel { color: var(--mark); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 12.5px;
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+  .chip.match { background: var(--good-soft); color: var(--good); }
+  .chip.miss { background: var(--mark-soft); color: var(--mark-deep); }
+  .chip.empty { color: var(--ink-faint); background: none; padding: 0; }
+
+  .loading-strip {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2.5px solid var(--line-strong);
+    border-top-color: var(--mark);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">فحص السير الذاتية بالذكاء الاصطناعي</div>
+    <h1>مين أنسب <span>سيرة ذاتية</span> للوظيفة دي؟</h1>
+    <p class="sub">الصق وصف الوظيفة، ارفع سيرة ذاتية واحدة أو أكتر، والنظام هيديك ترتيب فعلي بالنسبة والمهارات المتطابقة والناقصة.</p>
+  </div>
+
+  <div class="form-grid">
+    <div class="panel">
+      <h2>وصف الوظيفة</h2>
+      <p class="hint">المعلومات دي بتتقارن بمحتوى كل سيرة ذاتية.</p>
+
+      <label class="field-label" for="jobTitle">مسمى الوظيفة</label>
+      <input type="text" id="jobTitle" placeholder="مثال: Backend Developer" value="Backend Developer" />
+
+      <label class="field-label" for="jobDesc">تفاصيل الوظيفة والمهارات المطلوبة</label>
+      <textarea id="jobDesc" placeholder="الصق هنا وصف الوظيفة كامل..."></textarea>
+    </div>
+
+    <div class="panel">
+      <h2>السير الذاتية</h2>
+      <p class="hint">PDF أو DOCX أو TXT — يمكن رفع أكتر من ملف.</p>
+
+      <div class="dropzone" id="dropzone">
+        <div class="icon">&#8593;</div>
+        <div style="font-family:'Cairo',sans-serif; font-weight:700; font-size:14px;">اسحب الملفات هنا أو دوس للاختيار</div>
+        <p>PDF, DOCX, TXT</p>
+        <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt" />
+      </div>
+      <div class="file-list" id="fileList"></div>
+
+      <button class="run-btn" id="runBtn">قارن السير الذاتية</button>
+      <div class="loading-strip" id="loadingStrip"><div class="spinner"></div><span>بيتم التحليل والمقارنة...</span></div>
+      <div class="error-box" id="errorBox"></div>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="winner-strip">
+      <span class="tag">الأنسب</span>
+      <span class="text" id="winnerText"></span>
+    </div>
+    <div class="backend-note" id="backendNote"></div>
+    <div id="cardsContainer"></div>
+  </div>
+
+</div>
+
+<script>
+const API_BASE = "http://localhost:8000";
+
+let selectedFiles = [];
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileList = document.getElementById('fileList');
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag');
+  addFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener('change', () => addFiles(fileInput.files));
+
+function addFiles(fileListObj) {
+  for (const f of fileListObj) selectedFiles.push(f);
+  renderFileList();
+}
+
+function renderFileList() {
+  fileList.innerHTML = '';
+  selectedFiles.forEach((f, idx) => {
+    const row = document.createElement('div');
+    row.className = 'file-row';
+    row.innerHTML = `<span>${f.name}</span>`;
+    const btn = document.createElement('button');
+    btn.textContent = '×';
+    btn.onclick = () => { selectedFiles.splice(idx, 1); renderFileList(); };
+    row.appendChild(btn);
+    fileList.appendChild(row);
+  });
+}
+
+function gaugeSVG(score) {
+  const radius = 40, circumference = 2 * Math.PI * radius;
+  const offset = circumference * (1 - Math.min(Math.max(score, 0), 100) / 100);
+  const color = score >= 60 ? 'var(--good)' : (score >= 30 ? '#C9922B' : 'var(--mark)');
+  return `
+    <svg width="96" height="96" viewBox="0 0 96 96">
+      <circle cx="48" cy="48" r="${radius}" fill="none" stroke="var(--line)" stroke-width="9" />
+      <circle cx="48" cy="48" r="${radius}" fill="none" stroke="${color}" stroke-width="9"
+        stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+        transform="rotate(-90 48 48)" />
+      <text x="48" y="52" text-anchor="middle" font-family="Cairo, sans-serif" font-weight="800"
+        font-size="20" fill="var(--ink)">${Math.round(score)}%</text>
+    </svg>`;
+}
+
+function chipsHTML(list, cls) {
+  if (!list.length) return `<span class="chip empty">لا يوجد</span>`;
+  return list.map(s => `<span class="chip ${cls}">${s}</span>`).join('');
+}
+
+function renderResults(data) {
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('winnerText').innerHTML =
+    `<b>${data.winner_id}</b> — ${data.winner_reason}`;
+
+  const backendLabel = data.semantic_backend === 'sbert'
+    ? 'المطابقة الدلالية تعمل عبر SBERT'
+    : 'المطابقة الدلالية تعمل حاليًا عبر TF-IDF (احتياطي)';
+  document.getElementById('backendNote').textContent = backendLabel;
+
+  const container = document.getElementById('cardsContainer');
+  container.innerHTML = '';
+
+  data.rankings.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="gauge-wrap">
+        <span class="rank">#${i + 1}</span>
+        ${gaugeSVG(r.final_score)}
+      </div>
+      <div>
+        <div class="card-title">
+          <h3>${r.resume_id}</h3>
+          ${r.predicted_category ? `<span class="category-badge">${r.predicted_category} · ${r.category_confidence}%</span>` : ''}
+        </div>
+        <div class="explanation">${r.explanation}</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="num">${r.semantic_similarity}%</div><div class="lbl">تشابه دلالي</div></div>
+          <div class="metric"><div class="num">${r.skill_overlap_percent}%</div><div class="lbl">تطابق مهارات</div></div>
+        </div>
+        <div class="chip-groups">
+          <div class="chip-group match">
+            <div class="glabel">مهارات متطابقة</div>
+            <div class="chips">${chipsHTML(r.matching_skills, 'match')}</div>
+          </div>
+          <div class="chip-group miss">
+            <div class="glabel">مهارات ناقصة</div>
+            <div class="chips">${chipsHTML(r.missing_skills, 'miss')}</div>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+document.getElementById('runBtn').addEventListener('click', async () => {
+  const jobTitle = document.getElementById('jobTitle').value.trim();
+  const jobDesc = document.getElementById('jobDesc').value.trim();
+  const errorBox = document.getElementById('errorBox');
+  const loadingStrip = document.getElementById('loadingStrip');
+  const runBtn = document.getElementById('runBtn');
+
+  errorBox.style.display = 'none';
+
+  if (!jobDesc) { errorBox.textContent = 'من فضلك الصق وصف الوظيفة.'; errorBox.style.display = 'block'; return; }
+  if (!selectedFiles.length) { errorBox.textContent = 'من فضلك ارفع سيرة ذاتية واحدة على الأقل.'; errorBox.style.display = 'block'; return; }
+
+  const formData = new FormData();
+  formData.append('job_title', jobTitle || 'Untitled role');
+  formData.append('job_description', jobDesc);
+  selectedFiles.forEach(f => formData.append('resumes', f));
+
+  runBtn.disabled = true;
+  loadingStrip.style.display = 'flex';
+
+  try {
+    const res = await fetch(`${API_BASE}/analyze`, { method: 'POST', body: formData });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `فشل الطلب (${res.status})`);
+    }
+    const data = await res.json();
+    renderResults(data);
+  } catch (e) {
+    errorBox.textContent = `حصل خطأ: ${e.message}. تأكد إن السيرفر شغال على ${API_BASE}`;
+    errorBox.style.display = 'block';
+  } finally {
+    runBtn.disabled = false;
+    loadingStrip.style.display = 'none';
+  }
+});
+</script>
+</body>
+</html>

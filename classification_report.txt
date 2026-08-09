@@ -1,0 +1,48 @@
+                              precision    recall  f1-score   support
+
+              Administration       1.00      1.00      1.00        26
+                 Agriculture       1.00      1.00      1.00        23
+          Agriculture & Food       1.00      0.93      0.96        29
+              Arts & Culture       1.00      0.90      0.95        20
+           Beauty & Wellness       1.00      1.00      1.00        34
+                Conservation       1.00      1.00      1.00        19
+  Construction & Real Estate       1.00      0.97      0.98        32
+                  Consulting       0.96      0.93      0.94        27
+           Creative & Design       0.97      0.99      0.98        67
+            Data & Analytics       1.00      1.00      1.00       114
+        Education & Training       1.00      1.00      1.00        37
+          Energy & Utilities       1.00      1.00      1.00        18
+ Engineering & Manufacturing       1.00      1.00      1.00        87
+       Entertainment & Media       1.00      1.00      1.00        39
+               Environmental       1.00      1.00      1.00        12
+        Finance & Accounting       1.00      1.00      1.00        50
+ Government & Public Service       1.00      1.00      1.00        18
+                  Healthcare       1.00      1.00      1.00        98
+  Hospitality & Food Service       1.00      1.00      1.00        37
+       Hospitality & Tourism       1.00      1.00      1.00        21
+             Human Resources       1.00      1.00      1.00        53
+Human Services & Social Work       1.00      1.00      1.00        20
+        Information Services       1.00      1.00      1.00        13
+             Law Enforcement       1.00      1.00      1.00        32
+              Legal Services       1.00      1.00      1.00        49
+           Marketing & Sales       0.98      1.00      0.99        93
+       Media & Entertainment       1.00      1.00      1.00        26
+            Media Production       1.00      1.00      1.00        20
+        Non-profit & Charity       1.00      0.95      0.97        20
+   Operations & Supply Chain       1.00      1.00      1.00        53
+   Private Sector Management       0.97      1.00      0.98        32
+      Research & Development       1.00      1.00      1.00        17
+        Retail & Hospitality       0.94      1.00      0.97        45
+    Sales & Customer Service       0.92      0.96      0.94        23
+          Science & Research       1.00      1.00      1.00        28
+              Skilled Trades       1.00      0.98      0.99        56
+          Sports & Athletics       1.00      1.00      1.00        15
+         Sports & Recreation       1.00      0.96      0.98        27
+                  Technology       1.00      1.00      1.00       502
+              Transportation       0.94      1.00      0.97        31
+  Transportation & Logistics       1.00      0.96      0.98        24
+                  Veterinary       1.00      1.00      1.00        13
+
+                    accuracy                           0.99      2000
+                   macro avg       0.99      0.99      0.99      2000
+                weighted avg       0.99      0.99      0.99      2000
